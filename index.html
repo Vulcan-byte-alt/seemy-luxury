@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seemy — Visionary Eyewear</title>
+
+    <!-- Tailwind CSS CDN with Extended Config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#1A1A1A',
+                        primary: '#8CB03F',
+                        light: '#F9F9F9'
+                    },
+                    fontFamily: {
+                        playfair: ['Playfair Display', 'serif'],
+                        lato: ['Lato', 'sans-serif']
+                    },
+                    letterSpacing: {
+                        widest: '0.2em'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- AOS (Animate On Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        /* Fade-in-up animation for future micro-interactions */
+        .fade-in-up {
+            animation: fadeInUp 1.2s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stagger animation delays */
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+
+        /* Marquee Animation */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .animate-marquee {
+            animation: marquee 30s linear infinite;
+        }
+
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+    </style>
+</head>
+<body class="font-lato text-dark antialiased">
+
+    <!-- FLOATING PILL NAVBAR: Invisible Container with Glass Pills -->
+    <header class="fixed top-0 w-full z-50 h-24 flex items-center justify-between px-6 md:px-12 bg-transparent">
+
+        <!-- LEFT: Menu Pill (Glass Capsule) -->
+        <button id="menu-btn" class="flex items-center gap-3 px-5 py-2 rounded-full backdrop-blur-md bg-black/20 border border-white/10 shadow-lg hover:bg-black/30 hover:scale-105 active:scale-95 transition-transform duration-300 ease-out" aria-label="Open menu">
+            <!-- Hamburger Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <!-- Menu Label -->
+            <span class="font-lato text-[10px] uppercase tracking-widest text-white font-medium">
+                Menu
+            </span>
+        </button>
+
+        <!-- CENTER: Free-Floating Logo (No Background) -->
+        <div class="absolute left-1/2 -translate-x-1/2">
+            <a href="/" class="hover:opacity-80 transition-opacity duration-300">
+                <img src="assets/logo.png" alt="Seemy Logo" class="h-8 w-auto drop-shadow-md">
+            </a>
+        </div>
+
+        <!-- RIGHT: Utilities Pill (Glass Capsule) -->
+        <div class="flex items-center gap-5 px-5 py-2 rounded-full backdrop-blur-md bg-black/20 border border-white/10 shadow-lg hover:scale-105 active:scale-95 transition-transform duration-300 ease-out">
+            <!-- Search Icon -->
+            <button class="text-white hover:text-primary transition-colors duration-200" aria-label="Search">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </button>
+
+            <!-- Shopping Bag Icon -->
+            <button class="text-white hover:text-primary transition-colors duration-200" aria-label="Shopping bag">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+            </button>
+        </div>
+
+    </header>
+
+    <!-- CINEMATIC FULL-SCREEN MENU OVERLAY -->
+    <div id="menu-overlay" class="fixed inset-0 z-[60] bg-[#1A1A1A] opacity-0 pointer-events-none transition-opacity duration-700 ease-in-out">
+
+        <!-- Close Button (Top Right) -->
+        <button id="close-menu-btn" class="absolute top-8 right-8 text-white hover:scale-110 active:scale-95 transition-transform duration-300 ease-out" aria-label="Close menu">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+
+        <!-- Navigation List (Centered) -->
+        <nav class="h-full flex flex-col items-center justify-center">
+            <ul class="space-y-6 md:space-y-8 text-center">
+                <li>
+                    <a href="#collections" class="block font-playfair text-6xl md:text-8xl font-semibold text-transparent hover:text-white transition-colors duration-500 ease-out" style="-webkit-text-stroke: 1px white;">
+                        COLLECTIONS
+                    </a>
+                </li>
+                <li>
+                    <a href="#featured-products" class="block font-playfair text-6xl md:text-8xl font-semibold text-transparent hover:text-white transition-colors duration-500 ease-out" style="-webkit-text-stroke: 1px white;">
+                        NEW ARRIVALS
+                    </a>
+                </li>
+                <li>
+                    <a href="#story" class="block font-playfair text-6xl md:text-8xl font-semibold text-transparent hover:text-white transition-colors duration-500 ease-out" style="-webkit-text-stroke: 1px white;">
+                        OUR STORY
+                    </a>
+                </li>
+                <li>
+                    <a href="#contact" class="block font-playfair text-6xl md:text-8xl font-semibold text-transparent hover:text-white transition-colors duration-500 ease-out" style="-webkit-text-stroke: 1px white;">
+                        CONTACT
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Metadata (Bottom Corners) -->
+        <div class="absolute bottom-8 left-8 right-8 flex justify-between items-end">
+            <!-- Bottom Left: Socials -->
+            <div>
+                <p class="font-lato text-[10px] uppercase tracking-widest text-gray-500 mb-3">Follow Us</p>
+                <div class="flex gap-6">
+                    <a href="#" class="font-lato text-xs uppercase tracking-widest text-white hover:text-primary transition-colors duration-200">
+                        Instagram
+                    </a>
+                    <a href="#" class="font-lato text-xs uppercase tracking-widest text-white hover:text-primary transition-colors duration-200">
+                        TikTok
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bottom Right: Contact -->
+            <div class="text-right">
+                <p class="font-lato text-[10px] uppercase tracking-widest text-gray-500 mb-3">Contact</p>
+                <a href="mailto:hello@seemy.com" class="font-lato text-xs uppercase tracking-widest text-white hover:text-primary transition-colors duration-200">
+                    hello@seemy.com
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- HERO SECTION: Sticky Curtain Reveal — Frozen Background -->
+    <section class="sticky top-0 z-0 h-screen w-full overflow-hidden">
+        <!-- Full-Bleed Image: RIGHT-FOCUSED POSITIONING (Model visible, shadow on left) -->
+        <img
+            src="assets/hero-luxury.jpg"
+            alt="Avant-garde luxury eyewear in dramatic dark studio lighting"
+            class="absolute inset-0 w-full h-full object-cover object-[75%_center] transition-transform duration-700 ease-out hover:scale-105"
+        >
+
+        <!-- Typography: Floats in Natural Shadow on LEFT -->
+        <div class="relative z-20 h-full w-full flex items-center">
+            <!-- MASSIVE Headline: Left-Aligned in Dark Space -->
+            <div class="pl-12 lg:pl-24 max-w-5xl">
+                <h1 class="font-playfair text-6xl lg:text-8xl font-semibold text-white tracking-tight lg:tracking-tighter leading-none" data-aos="fade-up" data-aos-delay="200">
+                    See the World.<br>
+                    In A New Light.
+                </h1>
+
+                <!-- CTA: Ghost Button Below Headline -->
+                <div class="mt-16 lg:mt-20" data-aos="fade-up" data-aos-delay="400">
+                    <a
+                        href="#collections"
+                        class="inline-flex items-center font-lato text-xs uppercase tracking-widest text-white border border-white px-8 py-4 hover:bg-white hover:text-dark transition-all duration-300"
+                    >
+                        Discover the Collection
+                        <i class="ph ph-arrow-right ml-3" style="font-size: 14px; font-weight: 100;"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTENT WRAPPER: Slides UP Over Hero (Curtain Effect) -->
+    <main class="relative z-10 bg-white">
+
+        <!-- DESIGNER BRAND MARQUEE: Infinite Scroll with Fade Masks -->
+        <section class="w-full bg-white border-b border-gray-100 py-12 overflow-hidden relative">
+
+            <!-- Gradient Fade Masks (Left & Right) -->
+            <div class="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
+            <div class="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+
+            <!-- Scrolling Track (Infinite Loop) -->
+            <div class="animate-marquee flex items-center gap-24 whitespace-nowrap">
+
+                <!-- First Set of Brands -->
+                <span class="font-playfair text-2xl text-gray-400 uppercase tracking-widest">GUCCI</span>
+                <span class="font-playfair text-2xl text-gray-400 uppercase tracking-widest">PRADA</span>
+                <span class="font-playfair text-2xl text-gray-400 uppercase tracking-widest">SAINT LAURENT</span>
+                <span class="font-playfair text-2xl text-gray-400 uppercase tracking-widest">TOM FORD</span>
+                <span class="font-playfair text-2xl text-gray-400 uppercase tracking-widest">RAY-BAN</span>
+                <span class="font-playfair text-2xl text-gray-400 uppercase tracking-widest">OLIVER PEOPLES</span>
+                <span class="font-playfair text-2xl text-gray-400 uppercase tracking-widest">CARTIER</span>
+
+                <!-- Duplicate Set for Seamless Loop -->
+                <span class="font-playfair text-2xl text-gray-400 uppercase tracking-widest">GUCCI</span>
+                <span class="font-playfair text-2xl text-gray-400 uppercase tracking-widest">PRADA</span>
+                <span class="font-playfair text-2xl text-gray-400 uppercase tracking-widest">SAINT LAURENT</span>
+                <span class="font-playfair text-2xl text-gray-400 uppercase tracking-widest">TOM FORD</span>
+                <span class="font-playfair text-2xl text-gray-400 uppercase tracking-widest">RAY-BAN</span>
+                <span class="font-playfair text-2xl text-gray-400 uppercase tracking-widest">OLIVER PEOPLES</span>
+                <span class="font-playfair text-2xl text-gray-400 uppercase tracking-widest">CARTIER</span>
+
+            </div>
+        </section>
+
+        <!-- COLLECTIONS SECTION: Perfect Block Alignment -->
+        <section id="collections" class="py-32 px-6">
+            <div class="max-w-6xl mx-auto">
+
+                <!-- Section Header: Center-Aligned Editorial Title -->
+                <div class="text-center mb-32">
+                    <h2 class="font-playfair text-6xl md:text-7xl font-semibold text-dark tracking-tighter leading-none">
+                        The Curated Edit.
+                    </h2>
+                </div>
+
+                <!-- Perfect Grid: 7/5 Split with Controlled Height -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+
+                    <!-- LEFT COLUMN: Men's Collection (7 columns - Full Height Block) -->
+                    <div class="md:col-span-7" data-aos="fade-right">
+                        <a href="#mens" class="group block">
+                            <!-- Image Container: Fixed Height -->
+                            <div class="overflow-hidden md:h-[1200px]">
+                                <img
+                                    src="assets/collection-men.jpg"
+                                    alt="Men's luxury eyewear collection with sophisticated styling"
+                                    class="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                                >
+                            </div>
+
+                            <!-- Typography: Floats Below Image (Anti-Card) -->
+                            <div class="mt-4">
+                                <p class="font-lato text-xs uppercase tracking-[0.3em] font-bold text-gray-400">
+                                    Men's Collection
+                                </p>
+                                <h3 class="font-playfair text-2xl italic text-black mt-2 group-hover:text-primary transition-colors duration-300">
+                                    Modern Classics
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- RIGHT COLUMN: Two Images Stacked (5 columns - Fixed Height Distribution) -->
+                    <div class="md:col-span-5 flex flex-col gap-8">
+
+                        <!-- Item 2: Women's Collection (Half Height) -->
+                        <a href="#womens" class="group block" data-aos="fade-left">
+                            <!-- Image Container -->
+                            <div class="overflow-hidden md:h-[550px]">
+                                <img
+                                    src="assets/collection-women.jpg"
+                                    alt="Women's luxury eyewear with elegant sophistication"
+                                    class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                >
+                            </div>
+
+                            <!-- Typography -->
+                            <div class="mt-4">
+                                <p class="font-lato text-xs uppercase tracking-[0.3em] font-bold text-gray-400">
+                                    Women's Optical
+                                </p>
+                                <h3 class="font-playfair text-2xl italic text-black mt-2 group-hover:text-primary transition-colors duration-300">
+                                    Sculptural Elegance
+                                </h3>
+                            </div>
+                        </a>
+
+                        <!-- Item 3: Luxury Collection (Half Height) -->
+                        <a href="#luxury" class="group block" data-aos="fade-left">
+                            <!-- Image Container -->
+                            <div class="overflow-hidden md:h-[550px]">
+                                <img
+                                    src="assets/collection-luxury.jpg"
+                                    alt="Luxury eyewear collection with haute couture sophistication"
+                                    class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                >
+                            </div>
+
+                            <!-- Typography -->
+                            <div class="mt-4">
+                                <p class="font-lato text-xs uppercase tracking-[0.3em] font-bold text-gray-400">
+                                    Luxury Edit
+                                </p>
+                                <h3 class="font-playfair text-2xl italic text-black mt-2 group-hover:text-primary transition-colors duration-300">
+                                    Avant-Garde Vision
+                                </h3>
+                            </div>
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- FEATURED PRODUCTS SECTION: Dual Image Reveal -->
+        <section id="featured-products" class="py-24 px-6">
+            <div class="max-w-[90%] mx-auto">
+
+                <!-- Section Header with View All Link -->
+                <div class="relative text-center mb-24">
+                    <h2 class="font-playfair text-5xl font-semibold text-dark tracking-tight leading-none">
+                        New Season Arrivals
+                    </h2>
+                    <a href="#shop-all" class="absolute right-0 top-1/2 -translate-y-1/2 font-lato text-[10px] uppercase tracking-widest text-gray-400 underline decoration-1 underline-offset-4 hover:text-black transition-colors duration-200">
+                        View All
+                    </a>
+                </div>
+
+                <!-- 4-Column Product Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-16">
+
+                    <!-- Product Card 1 -->
+                    <div class="group relative cursor-pointer" data-aos="fade-up" data-aos-delay="0">
+                        <!-- Dual Image Container with Hover Reveal -->
+                        <div class="relative aspect-[3/4] overflow-hidden">
+                            <!-- Product Image (Default) -->
+                            <img
+                                src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800&q=80"
+                                alt="Luxury aviator sunglasses with gold frame"
+                                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+                            >
+                            <!-- Model Image (Reveal on Hover) -->
+                            <img
+                                src="https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=800&q=80"
+                                alt="Model wearing luxury aviator sunglasses"
+                                class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                            >
+                            <!-- Quick Add Button (Slides Up on Hover) -->
+                            <button class="absolute bottom-0 left-0 right-0 bg-dark text-white font-lato text-xs uppercase tracking-widest py-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                Quick Add
+                            </button>
+                        </div>
+
+                        <!-- Typography: Floats Below Image (Anti-Card) -->
+                        <div class="mt-6">
+                            <p class="font-lato text-[10px] uppercase tracking-widest text-gray-400">
+                                GUCCI
+                            </p>
+                            <h3 class="font-playfair text-xl text-black mt-1 leading-tight">
+                                The Aviator 1972
+                            </h3>
+                            <p class="font-lato text-sm text-gray-500 mt-1">
+                                $350.00
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 2 -->
+                    <div class="group relative cursor-pointer" data-aos="fade-up" data-aos-delay="100">
+                        <!-- Dual Image Container with Hover Reveal -->
+                        <div class="relative aspect-[3/4] overflow-hidden">
+                            <!-- Product Image (Default) -->
+                            <img
+                                src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80"
+                                alt="Minimalist round frame optical glasses"
+                                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+                            >
+                            <!-- Model Image (Reveal on Hover) -->
+                            <img
+                                src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80"
+                                alt="Woman wearing minimalist optical glasses"
+                                class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                            >
+                            <!-- Quick Add Button (Slides Up on Hover) -->
+                            <button class="absolute bottom-0 left-0 right-0 bg-dark text-white font-lato text-xs uppercase tracking-widest py-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                Quick Add
+                            </button>
+                        </div>
+
+                        <!-- Typography: Floats Below Image (Anti-Card) -->
+                        <div class="mt-6">
+                            <p class="font-lato text-[10px] uppercase tracking-widest text-gray-400">
+                                CELINE
+                            </p>
+                            <h3 class="font-playfair text-xl text-black mt-1 leading-tight">
+                                Minimal Round
+                            </h3>
+                            <p class="font-lato text-sm text-gray-500 mt-1">
+                                $420.00
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 3 -->
+                    <div class="group relative cursor-pointer" data-aos="fade-up" data-aos-delay="200">
+                        <!-- Dual Image Container with Hover Reveal -->
+                        <div class="relative aspect-[3/4] overflow-hidden">
+                            <!-- Product Image (Default) -->
+                            <img
+                                src="https://images.unsplash.com/photo-1577803645773-f96470509666?auto=format&fit=crop&w=800&q=80"
+                                alt="Geometric metal frame sunglasses"
+                                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+                            >
+                            <!-- Model Image (Reveal on Hover) -->
+                            <img
+                                src="https://images.unsplash.com/photo-1556306535-0f09a537f0a3?auto=format&fit=crop&w=800&q=80"
+                                alt="Model wearing geometric sunglasses"
+                                class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                            >
+                            <!-- Quick Add Button (Slides Up on Hover) -->
+                            <button class="absolute bottom-0 left-0 right-0 bg-dark text-white font-lato text-xs uppercase tracking-widest py-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                Quick Add
+                            </button>
+                        </div>
+
+                        <!-- Typography: Floats Below Image (Anti-Card) -->
+                        <div class="mt-6">
+                            <p class="font-lato text-[10px] uppercase tracking-widest text-gray-400">
+                                SAINT LAURENT
+                            </p>
+                            <h3 class="font-playfair text-xl text-black mt-1 leading-tight">
+                                Geometric Edge
+                            </h3>
+                            <p class="font-lato text-sm text-gray-500 mt-1">
+                                $480.00
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 4 -->
+                    <div class="group relative cursor-pointer" data-aos="fade-up" data-aos-delay="300">
+                        <!-- Dual Image Container with Hover Reveal -->
+                        <div class="relative aspect-[3/4] overflow-hidden">
+                            <!-- Product Image (Default) -->
+                            <img
+                                src="https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=800&q=80"
+                                alt="Cat-eye acetate frame sunglasses"
+                                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+                            >
+                            <!-- Model Image (Reveal on Hover) -->
+                            <img
+                                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80"
+                                alt="Model wearing cat-eye sunglasses"
+                                class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                            >
+                            <!-- Quick Add Button (Slides Up on Hover) -->
+                            <button class="absolute bottom-0 left-0 right-0 bg-dark text-white font-lato text-xs uppercase tracking-widest py-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                Quick Add
+                            </button>
+                        </div>
+
+                        <!-- Typography: Floats Below Image (Anti-Card) -->
+                        <div class="mt-6">
+                            <p class="font-lato text-[10px] uppercase tracking-widest text-gray-400">
+                                PRADA
+                            </p>
+                            <h3 class="font-playfair text-xl text-black mt-1 leading-tight">
+                                Cat-Eye Acetate
+                            </h3>
+                            <p class="font-lato text-sm text-gray-500 mt-1">
+                                $395.00
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- BRAND STORY SECTION: Editorial 50/50 Split -->
+        <section id="story" class="bg-[#F9F8F6] py-32">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
+                    <!-- LEFT: Craftsmanship Image (Portrait) -->
+                    <div class="overflow-hidden" data-aos="fade-right">
+                        <img
+                            src="https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=1200&q=80"
+                            alt="Artisan hands crafting luxury eyewear frames"
+                            class="w-full h-full md:h-[700px] object-cover transition-transform duration-700 ease-out hover:scale-105"
+                        >
+                    </div>
+
+                    <!-- RIGHT: Text Content (Centered with Breathing Room) -->
+                    <div class="flex items-center px-8 md:px-20 py-16 md:py-0" data-aos="fade-left" data-aos-delay="300">
+                        <div class="max-w-lg">
+                            <!-- Eyebrow -->
+                            <p class="font-lato text-xs uppercase tracking-[0.3em] text-gray-500 mb-6">
+                                The Atelier
+                            </p>
+
+                            <!-- Headline -->
+                            <h2 class="font-playfair text-5xl md:text-6xl font-medium text-black tracking-normal leading-[1.15] mt-6 mb-8">
+                                Sculpted by Hand.<br>
+                                Defined by Detail.
+                            </h2>
+
+                            <!-- Body Text -->
+                            <p class="font-lato text-lg text-gray-600 leading-loose max-w-lg mb-8">
+                                Seemy frames are carved from sustainable Italian acetate and hand-polished for 72 hours. We believe luxury is not just what you see, but what you feel.
+                            </p>
+
+                            <!-- Trust Signals -->
+                            <div class="font-lato text-xs uppercase tracking-widest text-gray-500 mb-8">
+                                Sustainable Materials  •  2-Year Warranty  •  Global Shipping
+                            </div>
+
+                            <!-- Signature -->
+                            <p class="font-playfair text-base italic text-gray-700">
+                                Made in Italy
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER SECTION: Modern Architectural (The Monolith) -->
+        <footer id="contact" class="bg-[#1A1A1A] py-32" data-aos="fade-in">
+            <div class="max-w-7xl mx-auto px-6 flex flex-col items-center justify-center text-center">
+
+                <!-- The Invitation -->
+                <h2 class="font-playfair text-4xl md:text-6xl text-white tracking-tight leading-tight">
+                    JOIN THE WORLD<br>OF SEEMY.
+                </h2>
+                <p class="font-lato text-sm text-gray-400 mt-4">
+                    First access to new collections and exclusive events.
+                </p>
+
+                <!-- The Clean Line (Input) -->
+                <div class="mt-12 w-full max-w-md relative">
+                    <input
+                        type="email"
+                        placeholder="Email Address"
+                        class="w-full bg-transparent border-b border-gray-700 py-4 text-center text-white placeholder-gray-600 focus:border-white focus:outline-none transition-colors duration-300 font-lato text-sm"
+                    >
+                    <button class="font-lato text-[10px] tracking-[0.3em] text-gray-500 hover:text-white transition-colors duration-300 mt-8 uppercase cursor-pointer">
+                        Subscribe
+                    </button>
+                </div>
+
+                <!-- The Signature (Bottom Navigation) -->
+                <nav class="mt-24">
+                    <ul class="flex items-center gap-8 font-lato text-[10px] tracking-widest text-gray-500 uppercase">
+                        <li>
+                            <a href="#collections" class="hover:text-white transition-colors duration-200">Shop</a>
+                        </li>
+                        <li class="text-gray-700">•</li>
+                        <li>
+                            <a href="#story" class="hover:text-white transition-colors duration-200">Story</a>
+                        </li>
+                        <li class="text-gray-700">•</li>
+                        <li>
+                            <a href="#" class="hover:text-white transition-colors duration-200">Stores</a>
+                        </li>
+                        <li class="text-gray-700">•</li>
+                        <li>
+                            <a href="#" class="hover:text-white transition-colors duration-200">Legal</a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <!-- Copyright (Subtle) -->
+                <p class="font-lato text-[9px] text-gray-700 mt-12 tracking-wide">
+                    &copy; 2025 Seemy Eyewear. All rights reserved.
+                </p>
+
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- AOS Script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,         // Slow luxury feel
+            once: true,             // Only animate once (don't fade out when scrolling up)
+            offset: 100,            // Trigger slightly before the element is in view
+            easing: 'ease-out-cubic'
+        });
+    </script>
+
+    <!-- Menu Overlay Toggle Script -->
+    <script>
+        // Get elements
+        const menuBtn = document.getElementById('menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const menuOverlay = document.getElementById('menu-overlay');
+
+        // Function to open menu
+        function openMenu() {
+            menuOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            menuOverlay.classList.add('opacity-100', 'pointer-events-auto');
+            // Prevent body scroll when menu is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Function to close menu
+        function closeMenu() {
+            menuOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+            menuOverlay.classList.add('opacity-0', 'pointer-events-none');
+            // Restore body scroll
+            document.body.style.overflow = '';
+        }
+
+        // Event listeners
+        menuBtn.addEventListener('click', openMenu);
+        closeMenuBtn.addEventListener('click', closeMenu);
+
+        // Close menu on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && menuOverlay.classList.contains('opacity-100')) {
+                closeMenu();
+            }
+        });
+
+        // Close menu when clicking on menu links
+        const menuLinks = menuOverlay.querySelectorAll('a[href^="#"]');
+        menuLinks.forEach(link => {
+            link.addEventListener('click', closeMenu);
+        });
+    </script>
+
+</body>
+</html>
