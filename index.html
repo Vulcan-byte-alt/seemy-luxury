@@ -98,21 +98,21 @@
         <!-- CENTER: Free-Floating Logo (No Background) -->
         <div class="absolute left-1/2 -translate-x-1/2">
             <a href="/" id="brand-logo" class="hover:opacity-80 transition-all duration-500 ease-in-out">
-                <img src="assets/logo.png" alt="Seemy Logo" class="h-8 w-auto drop-shadow-md">
+                <img src="assets/logo.png" alt="Seemy Logo" class="h-8 md:h-12 w-auto drop-shadow-md">
             </a>
         </div>
 
         <!-- RIGHT: Utilities Pill (Glass Capsule) -->
         <div class="flex items-center gap-5 px-5 py-2 rounded-full backdrop-blur-md bg-black/20 border border-white/10 shadow-lg hover:scale-105 active:scale-95 transition-transform duration-300 ease-out">
             <!-- Search Icon -->
-            <button class="text-white hover:text-primary transition-colors duration-200" aria-label="Search">
+            <button id="search-btn" class="text-white hover:text-primary transition-colors duration-200" aria-label="Search">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
             </button>
 
             <!-- Shopping Bag Icon -->
-            <button class="text-white hover:text-primary transition-colors duration-200" aria-label="Shopping bag">
+            <button id="cart-btn" class="text-white hover:text-primary transition-colors duration-200" aria-label="Shopping bag">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
@@ -122,7 +122,7 @@
     </header>
 
     <!-- CINEMATIC FULL-SCREEN MENU OVERLAY -->
-    <div id="menu-overlay" class="fixed inset-0 z-[60] bg-[#1A1A1A] opacity-0 pointer-events-none transition-opacity duration-700 ease-in-out">
+    <div id="menu-overlay" class="fixed inset-0 z-[100] bg-[#1A1A1A] opacity-0 pointer-events-none transition-opacity duration-700 ease-in-out">
 
         <!-- Close Button (Top Right) -->
         <button id="close-menu-btn" class="absolute top-8 right-8 text-white hover:scale-110 active:scale-95 transition-transform duration-300 ease-out" aria-label="Close menu">
@@ -183,13 +183,14 @@
 
     </div>
 
-    <!-- HERO SECTION: Sticky Curtain Reveal — Frozen Background -->
-    <section class="sticky top-0 z-0 h-screen w-full overflow-hidden">
+    <!-- HERO SECTION: Fixed Background Layer (Curtain Reveal Effect) -->
+    <section id="hero" class="fixed top-0 left-0 w-full h-screen z-0 overflow-hidden bg-black">
         <!-- Full-Bleed Image: RIGHT-FOCUSED POSITIONING (Model visible, shadow on left) -->
         <img
+            id="hero-image"
             src="assets/hero-luxury.jpg"
             alt="Avant-garde luxury eyewear in dramatic dark studio lighting"
-            class="absolute inset-0 w-full h-full object-cover object-[75%_center] transition-transform duration-700 ease-out hover:scale-105"
+            class="absolute inset-0 w-full h-full object-cover object-[75%_center]"
         >
 
         <!-- Typography: Floats in Natural Shadow on LEFT -->
@@ -215,11 +216,11 @@
         </div>
     </section>
 
-    <!-- CONTENT WRAPPER: Slides UP Over Hero (Curtain Effect) -->
-    <main class="relative z-10 bg-white w-full max-w-full overflow-x-hidden">
+    <!-- CONTENT WRAPPER: The Moving Curtain (Slides Over Hero) -->
+    <main class="relative z-10 bg-white w-full max-w-full overflow-x-hidden mt-[100vh]">
 
         <!-- DESIGNER BRAND MARQUEE: Infinite Scroll with Fade Masks -->
-        <section class="w-full max-w-full bg-white border-b border-gray-100 py-12 overflow-hidden relative">
+        <section class="w-full max-w-full bg-white border-b border-gray-100 py-12 overflow-hidden relative" data-aos="fade-up" data-aos-duration="1500">
 
             <!-- Gradient Fade Masks (Left & Right) -->
             <div class="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
@@ -346,7 +347,7 @@
             <div class="max-w-[90%] mx-auto">
 
                 <!-- Section Header -->
-                <div class="text-center mb-24">
+                <div class="text-center mb-24" data-aos="fade-up" data-aos-duration="1200">
                     <h2 class="font-playfair text-4xl md:text-5xl font-semibold text-dark tracking-tight leading-none">
                         New Season Arrivals
                     </h2>
@@ -758,6 +759,231 @@
                 logo.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
             } else {
                 logo.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+            }
+        });
+    </script>
+
+    <!-- Hero Cinematic Physics Script -->
+    <script>
+        const heroImage = document.getElementById('hero-image');
+
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+
+            // Scale: Zoom OUT as user scrolls (1 → 0.9)
+            // Caps at 0.9 to prevent over-shrinking
+            const scale = Math.max(0.9, 1 - scrollY * 0.0005);
+
+            // Opacity: Fade to darker (1 → 0.5)
+            // Caps at 0.5 to keep image visible but darkened
+            const opacity = Math.max(0.5, 1 - scrollY * 0.001);
+
+            // Apply transforms
+            heroImage.style.transform = `scale(${scale})`;
+            heroImage.style.opacity = opacity;
+        });
+    </script>
+
+    <!-- CART DRAWER OVERLAY (Backdrop) -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[190] opacity-0 pointer-events-none transition-opacity duration-500"></div>
+
+    <!-- CART DRAWER (Slide-In Panel) -->
+    <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full md:w-[450px] bg-white z-[200] translate-x-full transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] shadow-2xl flex flex-col">
+
+        <!-- DRAWER HEADER -->
+        <div class="relative border-b border-gray-100 p-8">
+            <h3 class="font-lato text-xs uppercase tracking-[0.2em] text-dark font-semibold">
+                Your Bag (1)
+            </h3>
+
+            <!-- Close Button -->
+            <button id="cart-close-btn" class="absolute top-6 right-6 font-lato text-xs uppercase tracking-widest text-gray-500 hover:text-dark transition-colors duration-200 cursor-pointer">
+                Close
+            </button>
+        </div>
+
+        <!-- DRAWER BODY (Scrollable Cart Items) -->
+        <div class="flex-1 overflow-y-auto p-8">
+
+            <!-- Cart Item Card -->
+            <div class="flex gap-6 pb-8 border-b border-gray-100">
+
+                <!-- Product Image -->
+                <div class="w-24 h-24 flex-shrink-0 bg-gray-100 rounded-sm overflow-hidden">
+                    <img src="assets/product-01-gucci-aviator.jpg" alt="The Aviator 1972" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Product Details -->
+                <div class="flex-1 flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-playfair text-lg font-semibold text-dark mb-1">
+                            The Aviator 1972
+                        </h4>
+                        <p class="font-lato text-xs text-gray-500 uppercase tracking-wide mb-2">
+                            Black / Acetate
+                        </p>
+                    </div>
+                    <p class="font-lato text-sm text-dark font-semibold">
+                        $350.00
+                    </p>
+                </div>
+
+                <!-- Remove Button -->
+                <button class="text-gray-400 hover:text-dark transition-colors duration-200" aria-label="Remove item">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- DRAWER FOOTER (Checkout Section) -->
+        <div class="border-t border-gray-100 p-8">
+
+            <!-- Subtotal -->
+            <div class="flex justify-between items-center mb-6">
+                <span class="font-lato text-sm uppercase tracking-wide text-gray-600">Subtotal</span>
+                <span class="font-lato text-lg font-semibold text-dark">$350.00</span>
+            </div>
+
+            <!-- Checkout Button -->
+            <button class="w-full bg-dark text-white font-lato text-xs uppercase tracking-[0.2em] py-4 rounded-sm hover:bg-gray-900 transition-colors duration-300">
+                Checkout
+            </button>
+
+            <!-- Continue Shopping Link -->
+            <button id="cart-continue-shopping" class="w-full mt-4 font-lato text-xs uppercase tracking-wide text-gray-500 hover:text-dark transition-colors duration-200">
+                Continue Shopping
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Cart Drawer Script -->
+    <script>
+        const cartBtn = document.getElementById('cart-btn');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const cartDrawer = document.getElementById('cart-drawer');
+        const cartCloseBtn = document.getElementById('cart-close-btn');
+        const cartContinueShopping = document.getElementById('cart-continue-shopping');
+
+        // Open Cart
+        function openCart() {
+            cartDrawer.classList.remove('translate-x-full');
+            cartOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            cartOverlay.classList.add('opacity-100');
+            // Prevent body scroll when cart is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Cart
+        function closeCart() {
+            cartDrawer.classList.add('translate-x-full');
+            cartOverlay.classList.add('opacity-0', 'pointer-events-none');
+            cartOverlay.classList.remove('opacity-100');
+            // Restore body scroll
+            document.body.style.overflow = '';
+        }
+
+        // Event Listeners
+        cartBtn.addEventListener('click', openCart);
+        cartCloseBtn.addEventListener('click', closeCart);
+        cartContinueShopping.addEventListener('click', closeCart);
+        cartOverlay.addEventListener('click', closeCart);
+    </script>
+
+    <!-- FULL-SCREEN SEARCH OVERLAY -->
+    <div id="search-overlay" class="fixed inset-0 bg-[#1A1A1A] z-[200] opacity-0 pointer-events-none transition-opacity duration-500 flex flex-col items-center justify-center">
+
+        <!-- Close Button (Top Right) -->
+        <button id="search-close-btn" class="absolute top-8 right-8 cursor-pointer text-white hover:opacity-50 p-4 transition-opacity duration-300" aria-label="Close search">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+
+        <!-- Search Content (Centered) -->
+        <div class="w-full max-w-4xl px-6 text-center">
+
+            <!-- Label -->
+            <p class="font-lato text-xs tracking-[0.3em] text-gray-500 uppercase mb-8">
+                What are you looking for?
+            </p>
+
+            <!-- Search Input -->
+            <input
+                type="text"
+                id="search-input"
+                placeholder="Type to search..."
+                class="w-full bg-transparent border-b border-gray-700 py-4 text-center text-3xl md:text-5xl text-white placeholder-gray-600 focus:border-white focus:outline-none font-playfair transition-colors duration-300"
+            >
+
+            <!-- Trending Suggestions -->
+            <div class="mt-12">
+                <!-- Header -->
+                <p class="font-lato text-[10px] tracking-widest text-gray-600 uppercase mb-4">
+                    Trending Now
+                </p>
+
+                <!-- Tag Links -->
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a href="#" class="font-lato text-sm tracking-widest text-gray-400 hover:text-white transition-colors duration-300 uppercase">
+                        Aviator
+                    </a>
+                    <a href="#" class="font-lato text-sm tracking-widest text-gray-400 hover:text-white transition-colors duration-300 uppercase">
+                        Oversized
+                    </a>
+                    <a href="#" class="font-lato text-sm tracking-widest text-gray-400 hover:text-white transition-colors duration-300 uppercase">
+                        Black Acetate
+                    </a>
+                    <a href="#" class="font-lato text-sm tracking-widest text-gray-400 hover:text-white transition-colors duration-300 uppercase">
+                        Cat Eye
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Search Overlay Script -->
+    <script>
+        const searchBtn = document.getElementById('search-btn');
+        const searchOverlay = document.getElementById('search-overlay');
+        const searchCloseBtn = document.getElementById('search-close-btn');
+        const searchInput = document.getElementById('search-input');
+
+        // Open Search
+        function openSearch() {
+            searchOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            searchOverlay.classList.add('opacity-100', 'pointer-events-auto');
+            // Focus the input immediately so user can start typing
+            setTimeout(() => {
+                searchInput.focus();
+            }, 300); // Delay to ensure overlay is visible
+            // Prevent body scroll when search is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Search
+        function closeSearch() {
+            searchOverlay.classList.add('opacity-0', 'pointer-events-none');
+            searchOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+            // Clear the input
+            searchInput.value = '';
+            // Restore body scroll
+            document.body.style.overflow = '';
+        }
+
+        // Event Listeners
+        searchBtn.addEventListener('click', openSearch);
+        searchCloseBtn.addEventListener('click', closeSearch);
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && searchOverlay.classList.contains('opacity-100')) {
+                closeSearch();
             }
         });
     </script>
